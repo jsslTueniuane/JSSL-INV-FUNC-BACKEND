@@ -1,0 +1,23 @@
+# Archivos y directorios generados por IDEs y editores de texto
+.idea/
+.vscode/
+*.swp
+*~
+
+# Archivos de compilación y ejecutables
+*.class
+*.jar
+*.war
+*.ear
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Archivos de dependencias y entornos virtuales
+venv/
+.env
+
+# Archivos de configuración local
+config.local.js
+config.local.json
