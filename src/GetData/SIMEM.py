@@ -4,6 +4,7 @@ from typing import Dict
 from datetime import date
 import os
 
+# Minimum date to get data
 minimun_date = date(2013, 1, 1)
 
 
@@ -83,7 +84,7 @@ class DataSIMEM:
                                                              'RegionHidrologica', 
                                                              'AportesHidricosEnergia', 
                                                              'PromedioAcumuladoEnergia', 
-                                                             'MediaHistoricaEnergia']]
+                                                             'MediaHistoricaEnergia']][self.data_sets['B0E933']['CodigoEmbalse']!='Colombia']
 
         # Setting columns from Reservas hidricas
         self.data_sets['B0E933'] = self.data_sets['B0E933'][['Fecha', 
@@ -92,7 +93,7 @@ class DataSIMEM:
                                                              'VolumenUtilDiarioEnergia', 
                                                              'CapacidadUtilEnergia', 
                                                              'VolumenTotalEnergia', 
-                                                             'VertimientosEnergia']][self.data_sets['B0E933']!='AGREGADO_SIN']
+                                                             'VertimientosEnergia']]['AGREGADO' not in self.data_sets['B0E933']['CodigoEmbalse']]
 
         # Setting columns from Listado embalses
         self.data_sets['A0CF2A'] = self.data_sets['A0CF2A'][['CodigoEmbalse', 

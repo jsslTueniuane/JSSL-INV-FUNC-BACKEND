@@ -43,7 +43,7 @@ class DataOni:
         df['Mes'] = df['SEAS'].map(seas_to_month)
         
         # Renaming columns for better understanding
-        df.rename(columns={'YR': 'Year', 'Mes': 'Month', 'TOTAL': 'ONI'}, inplace=True)
+        df.rename(columns={'YR': 'Year', 'Mes': 'Month', 'TOTAL': 'SST'}, inplace=True)
 
         # Creating the date column based on the year and month and setting the day to the first of the month
         df['Date'] = pd.to_datetime(df[['Year', 'Month']].assign(DAY=1))

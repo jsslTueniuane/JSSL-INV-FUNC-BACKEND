@@ -5,3 +5,4 @@ pandas
 numpy
 pydataxm
 statsmodels
+scikit-learn
