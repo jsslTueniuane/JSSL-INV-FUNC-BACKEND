@@ -100,7 +100,18 @@ Donde están las clases para la extracción de la información desde las fuentes
 
         - **Extracción:** Se utiliza el SDK <code>pydataxm</code> que pone a dispocisión el administrador del sitio y mediante la clase <code>pydatasimem.ReadSIMEM</code> colocando como parametro de <code>dataset_id='B0E933'</code> y colocando el rango de fechas que se quiere extraer se obtiene un DataFrame con las siguientes columnas:
 
-        - **Estandarización:** Se retiran los registros que contienen la palabra <code>'AGREGADO'</code> en la columna ***CodigoEmbalse*** dado a que coresponde con los agregadas para Colombia y Bogota de las variables para la fecha del registro.  
+            | Columna | Descripción | Tipo de dato |
+            |---------|-------------|--------------|
+            |   FechaPublicacion  |  Fecha de publicación del dato en el SIMEM           |    Date         |
+            |   Fecha  |  Fecha de representación de la información           |    Date         |
+            |   CodigoEmbalse   |  Zona geográfica en la cual se agrupan elementos con características hidrológicas similares.  |       str       |
+            |   RegionHidrologica   |  Código del embalse  |       str       |
+            |   VolumenUtilDiarioEnergia   |  	Volúmen Útil Diario del Embalse reportado por el agente expresado en energía  |       float       |
+            |   CapacidadUtilEnergia   |  Es el máximo volumen que puede ser utilizado para la generación de energía en cada embalse. Corresponde a la diferencia entre el volumen máximo técnico y el volumen mínimo técnico.  |       float       |
+            |   VolumenTotalEnergia   |  	Es el volumen máximo que puede almacenarse en un embalse, bajo condiciones normales de operación. Equivale a la suma de los siguientes volúmenes: volumen de embalse muerto, volumen mínimo técnico y volumen útil del embalse  |       float       |
+            |   VertimientosEnergia   |  	Vertimientos reportados expresados en energía  |       float       |
+
+        - **Estandarización:** Se retiran los registros que contienen la palabra <code>'AGREGADO'</code> en la columna ***CodigoEmbalse*** dado a que coresponde con los agregadas para Colombia y Bogota de las variables para la fecha del registro, se seleccionan solamente las columnas ***Fecha***, ***CodigoEmbalse***, ***RegionHidrologica***, ***VolumenUtilDiarioEnergia***, ***CapacidadUtilEnergia***, ***VolumenTotalEnergia*** y ***VertimientosEnergia***.  
 
         - **Guardado:** Se almacenen los resultados en la ruta <code>Data\SIMEM\ReservasHidraulicasEnergía.xlsx</code> para luego ser utilizados en el procesos de transformación. Se obtiene un DataFrame con las siguientes columnas:
 
@@ -108,7 +119,17 @@ Donde están las clases para la extracción de la información desde las fuentes
 
         - **Extracción:** Se utiliza el SDK <code>pydataxm</code> que pone a dispocisión el administrador del sitio y mediante la clase <code>pydatasimem.ReadSIMEM</code> colocando como parametro de <code>dataset_id='BA1C55'</code> y colocando el rango de fechas que se quiere extraer se obtiene un DataFrame con las siguientes columnas:
 
-        - **Estandarización:** Se retiran los registros iguales a <code>'Colombia'</code> en la columna ***CodigoEmbalse*** dado a que coresponde con los agregados para Colombia de las variables para la fecha del registro, se seleccionan solamente las columnas ***Fecha***,***CodigoSerieHidrologica***,***RegionHidrologica***,***AportesHidricosEnergia***,***PromedioAcumuladoEnergia***, ***MediaHistoricaEnergia***.  
+            | Columna | Descripción | Tipo de dato |
+            |---------|-------------|--------------|
+            |   FechaPublicacion  |  Fecha de publicación del dato en el SIMEM           |    Date         |
+            |   Fecha  |  Fecha de representación de la información           |    Date         |
+            |   CodigoSerieHidrologica   |  Código único para identificar una serie hidrologica o un río del Sistema Interconectado Nacional  |       str       |
+            |   RegionHidrologica   |  Zona geográfica en la cual se agrupan elementos con características hidrológicas similares.  |       str       |
+            |   AportesHidricosEnergia   |  	Aporte hídrico asociado con un recurso de generación despachado centralmente. |       float       |
+            |   PromedioAcumuladoEnergia  |  Aportes hidricos promedio para lo que va corrido del mes.  |       float       |
+            |   MediaHistoricaEnergia   |  	Promedio mensual multianual de la serie hidrológica aprobada por Acuerdo CNO  |       float       |
+
+        - **Estandarización:** Se retiran los registros iguales a <code>'Colombia'</code> en la columna ***CodigoEmbalse*** dado a que coresponde con los agregados para Colombia de las variables para la fecha del registro, se seleccionan solamente las columnas ***Fecha***,***CodigoSerieHidrologica***,***RegionHidrologica***,***AportesHidricosEnergia***,***PromedioAcumuladoEnergia*** y ***MediaHistoricaEnergia***.  
 
         - **Guardado:** Se almacenen los resultados en la ruta <code>Data\SIMEM\AportesHidricos.xlsx</code> para luego ser utilizados en el procesos de transformación. Se obtiene un DataFrame con las siguientes columnas:
 
