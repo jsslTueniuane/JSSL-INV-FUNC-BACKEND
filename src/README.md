@@ -140,9 +140,39 @@ Donde se realiza un análisis exploratorio de la información que hay en los con
 
 - <code>ExploratoryAnalysis.ipynb</code>: Este Notebook tiene como objetivo realizar un análisis exploratorio de la información que hay en los scripts de la carpeta <code>src/GetData</code>. Para más detalles, consulte el archivo.
 
-- <code>TransformData.py</code>: En este script se encuentra la clase <code>JoinData</code>, la cual es la encargada de leer la información de los archivos estandarizados de las rutas <code>Data\ONI</code>, <code>Data\PARATEC</code> y <code>Data\SIMEM</code>, y unir la información (agregada por región y región hidrológica o no agregada), guardándola en la carpeta <code>Data\Results</code>. Dependiendo de si se desea la información estandarizada o no, se almacena en las carpetas <code>Data\Results\NotStandardized</code> en caso de no estar estandarizada, o en <code>Data\Results\Standardized</code> en caso de estar estandarizada.
+- <code>TransformData.py</code>: En este script se encuentra la clase <code>JoinData</code>, la cual es la encargada de leer la información de los archivos estandarizados de las rutas <code>Data\ONI</code>, <code>Data\PARATEC</code> y <code>Data\SIMEM</code>, y unir la información (agregada por región y región hidrológica o no agregada), guardándola en la carpeta <code>Data\Results</code>. Dependiendo de si se desea la información estandarizada o no, se almacena en las carpetas <code>Data\Results\NotStandardized</code> en caso de no estar estandarizada, o en <code>Data\Results\Standardized</code> en caso de estar estandarizada. Antes de realizar la union de los DataSet para cada uno se realizan las siguientes transformaciones:
+    - **PARATEC**: En la columna ***reservoir*** se retiranlos espacios y las letras con tildes y se reemplanzan con las letras sin tilde.
+    - **ONI**: Se crean nuevos registros para que el DataSet quede con granularidad diaria (Dado a que el DataSet original tiene granularidad diaria) y se rellenan los datos nuevos con los correspondientes valores de inicio del mes para los atributos de **SST** y **ANOM**.
+    - **ListadoEmbalses:** En la columna ***NombreEmbalse*** se retiranlos espacios y las letras con tildes y se reemplanzan con las letras sin tilde.  
+    Continuación se muestra la relación entre los DataSets.
+    - **ReservasEmbalses:** Se cambia el tipo de dato de la columna **Fecha** a <code>Datetime.Date</code>. 
+    - **AportesHidricos**: Se quitan todos los nulos de las columnas **PromedioAcumuladoEnergia** y **MediaHistoricaEnergia** con el registro no nulo siguiente mas cercano.
 
+    A continuación se detalla la relación entre los DataSets:  
 
+    ![Relación entre los DataSets](img\DiagramaEntidades.png)
+
+    Se van a generar cuatro DataSet dos con información no agregada para las reservas de los embalses, uno estandarizado y otro no; y dos DataSets agregados por region hidrologica tambien uno estandarizado y otro no.   
+    Para generar los DataSets no agregados primero se realiza la unión entre los DataSets de **PARATEC** y **ListadoEmbalses** de la siguiente manera; Primero se realizar la unión mediante las columnas ***reservior*** y ***NombreEmbalse***, luego del DataFrame resultate se realiza nuevamente la unión con el mismo DataFrame **ListadoEmbalses** pero ahora por la columna ***CodigoEmbalse***, este resultado da una DataFrame con resultan dos columnas llamadas ***CodigoEmbalse_x*** y ***CodigoEmbalse_y*** y se crea nuevamente la columna ***CodigoEmbalse*** realizan el coalesce entre esas dos columnas y luego del DataSet resultante se seleccionan unicamente las columnas ***latitude***, ***longitude*** y ***CodigoEmbalse***.
+
+    Luego se realiza la unión de DataSet resultante ente **ListadoEmbalses** y **PARATEC**, con los Datasets **ONI** y **ReservasEmbalses** por las columnas ***Fecha*** y **Date**. De este DataFrame resultante (que llamaremos **ResultadosNoAgregados**) se selecccionan unicamente las columnas ***Fecha***, ***VolumenUtilDiarioEnergia***, ***CapacidadUtilEnergia***, ***VolumenTotalEnergia***, ***VertimientosEnergia***, ***SST***, ***ANOM***,***latitude*** y ***longitude***; se crean las columnas ***Dia***, ***Mes*** y ***Año*** basado en la columna ***Fecha*** y luego se elimina esta columna. De el DataSet **ResultadosNoAgregados** se guardan dos archivos <code>Data/Results/NotStandardized/EmbalsesNoAgregados.xlsx</code> que son los mismos datos del DataSet y <code>Data/Results/NotStandardized/EmbalsesNoAgregados.xlsx</code> que es el DataSet resultante de la estandarización de los datos mediante el metodo de <code>MinMaxScaler</code>.   
+
+    Para generar los DataSet agregados se realiza la union de el DataSet **ReservasEmbalses**, con el **ONI** mediante las columnas ***Date*** y ***Fecha***, luego se agrupa por las columnas ***Fecha*** y ***RegionHidrologica*** con las sigientes agregaciones.
+    
+    - VolumenUtilDiarioEnergia - mean.
+    - CapacidadUtilEnergia - mean.
+    - VolumenTotalEnergia - mean.
+    - VertimientosEnergia - sum.
+    - SST - mean.
+    - ANOM - mean.           
+
+    Para el DataSet **AportesHidricos** se realiza la agregacion por la misma la agregación por las mismas columnas pero con las siguientes agregaciones:
+
+    - AportesHidricosEnergia - sum.
+    - PromedioAcumuladoEnergia - mean.
+    - MediaHistoricaEnergia - mean.     
+
+    De el resultado  de el Agregado de **AportesHidricos** se realiza la union con el agregado con el resultado de la union de **ONI** con **ReservasEmbalses** mediante las columnas ***Fecha*** y ***RegionHidologica*** de este resultado que llamaremos **ResultadosAgregados** se completan los datos faltantes de las columnas **MediaHistoricaEnergia** y **PromedioAcumuladoEnergia** con el datos posterior valido mas cercano. se crean las columnas ***Dia***, ***Mes*** y ***Año*** basado en la columna ***Fecha*** y se cambia la variable categorica ***RegionHidrologica*** por columnas dummys; posteriormente se elimina la columna ***Fecha***. De el DataSet **ResultadosAgregados** se guardan dos archivos <code>Data/Results/NotStandardized/EmbalsesAgregados.xlsx</code> que son los mismos datos del DataSet y <code>Data/Results/NotStandardized/EmbalsesAgregados.xlsx</code> que es el DataSet resultante de la estandarización de los datos mediante el metodo de <code>MinMaxScaler</code>.     
 
 ## **ResourceManager:** 
 Clases para conexión a los recursos de Azure correspondientes. **[Próximamente]**

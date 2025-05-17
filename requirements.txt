@@ -6,3 +6,4 @@ numpy
 pydataxm
 statsmodels
 scikit-learn
+seaborn

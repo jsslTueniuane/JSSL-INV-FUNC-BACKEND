@@ -113,14 +113,23 @@ class JoinData:
         df_merge_agregate = self._merge_data_not_agregate()
         
         # Aggregate data with Date and region
-        df_merge_res_embalses_agregados = df_merge_agregate.groupby(['Fecha', 'RegionHidrologica']).agg({'VolumenUtilDiarioEnergia': 'mean','CapacidadUtilEnergia':'mean','VolumenTotalEnergia':'max','VertimientosEnergia':'sum','SST':'mean','ANOM':'mean'}).reset_index()
+        df_merge_res_embalses_agregados = df_merge_agregate.groupby(['Fecha', 'RegionHidrologica']).agg({
+            'VolumenUtilDiarioEnergia': 'mean',
+            'CapacidadUtilEnergia':'mean',
+            'VolumenTotalEnergia':'max',
+            'VertimientosEnergia':'sum',
+            'SST':'mean',
+            'ANOM':'mean'}).reset_index()
 
         # filling missing values in df_simem_aportes
         df_simem_aportes['PromedioAcumuladoEnergia'].fillna(method='ffill', inplace=True)
         df_simem_aportes['MediaHistoricaEnergia'].fillna(method='bfill', inplace=True)
         
         # Aggregate data with Date and region
-        df_aportes_agregados = df_simem_aportes.groupby(['Fecha', 'RegionHidrologica']).agg({'AportesHidricosEnergia': 'sum','PromedioAcumuladoEnergia':'mean','MediaHistoricaEnergia':'max'}).reset_index()
+        df_aportes_agregados = df_simem_aportes.groupby(['Fecha', 'RegionHidrologica']).agg({
+            'AportesHidricosEnergia': 'sum',
+            'PromedioAcumuladoEnergia':'mean',
+            'MediaHistoricaEnergia':'max'}).reset_index()
 
         # Join dataframes on Date and region
         df_merge_res_embalses_agregados['Fecha'] = df_merge_res_embalses_agregados['Fecha'].astype(str)
@@ -135,7 +144,8 @@ class JoinData:
         df_merge_agregate['Dia'] = df_merge_agregate['Fecha'].apply(lambda x: int(x.split('-')[2]))
         df_merge_agregate['Mes'] = df_merge_agregate['Fecha'].apply(lambda x: int(x.split('-')[1]))
         df_merge_agregate['Año'] = df_merge_agregate['Fecha'].apply(lambda x: int(x.split('-')[0]))
-        df_merge_agregate.drop(columns=['Fecha','RegionHidrologica'], inplace=True)
+        df_merge_agregate = pd.get_dummies(df_merge_agregate)
+        df_merge_agregate.drop(columns=['Fecha'], inplace=True)
 
         return df_merge_agregate
     

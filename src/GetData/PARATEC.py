@@ -44,7 +44,7 @@ class DataPARATEC:
         data['isReservoirAggregate'] = data['isReservoirAggregate'].map({'Si': 1, 'No': 0})
         
         # Selecting columns
-        data = data[['reservoir', 'isReservoirAggregate', 'latitude', 'longitude']]
+        data = data[['reservoir', 'latitude', 'longitude']]
         
         # removing aggregates from reservoirs (those with NaN latitude)
         data = data[~data['latitude'].isnull()]
