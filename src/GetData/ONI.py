@@ -38,7 +38,7 @@ class DataOni:
 
         """
         df = self.data_raw.copy()
-        
+
         # Applying mapping
         df['Mes'] = df['SEAS'].map(seas_to_month)
         
@@ -47,9 +47,9 @@ class DataOni:
 
         # Creating the date column based on the year and month and setting the day to the first of the month
         df['Date'] = pd.to_datetime(df[['Year', 'Month']].assign(DAY=1))
-        
+
         # Selected the necessary columns
-        df = df[['Date','ONI','ANOM']]
+        df = df[['Date','SST','ANOM']]
         self.data = df
         return self.data
     
@@ -66,7 +66,7 @@ class DataOni:
             self._clean_data()
         return self.data
     
-    def save_oni_data(self, path: str)-> pd.DataFrame:
+    def save_oni_data(self, path: str,save_raw:bool=False)-> pd.DataFrame:
         """
         Saves the cleaned ONI data to an Excel file.
 
@@ -77,19 +77,24 @@ class DataOni:
             pandas.DataFrame: Cleaned ONI data.
 
         """
-        if not self.data:
+        
+        
+        if self.data is None:
             # Clean the data
             self._clean_data()
+            
+        data_save = self.data_raw if save_raw else self.data
         try:
             # Save the data in the path
-            self.data.to_excel(path,index=False)
+            data_save.to_excel(path,index=False)
         except Exception as e:
             print(f"Error al guardar los datos en la ruta {path}: {e}")
         else:
-            return self.data
+            return data_save
     
 if __name__ == '__main__':
     oni = DataOni()
-    oni.save_oni_data('Data\ONI\ONI_historico.xlsx')
+    oni.save_oni_data('Data/Cleansed/ONI/ONI_historico.xlsx',save_raw=False)
+    oni.save_oni_data('Data/Raw/ONI/ONI_historico.xlsx',save_raw=True)
 
         

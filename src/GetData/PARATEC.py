@@ -2,6 +2,7 @@ import requests
 import urllib3
 import pandas as pd
 import datetime
+import json
 
 # API to get reservoirs data
 url_paratect = "https://paratecbackend.xm.com.co/reportehidrologia/api/Hydrology/ReservoirInfo"
@@ -63,7 +64,7 @@ class DataPARATEC:
             self._clean_data()
         return self.data
     
-    def save_paratec_data(self, path: str)->pd.DataFrame:
+    def save_paratec_data(self, path: str,save_raw:bool=False)->pd.DataFrame:
         """
         Saves the PARATEC data to a specified path.
 
@@ -73,9 +74,16 @@ class DataPARATEC:
         Returns:
             pandas.DataFrame: Cleaned reservoirs data.
         """
-        if not self.data:
+        if self.data is None:
             # Clean the data
             self._clean_data()
+        
+        if save_raw:
+            with open(path, 'w') as file:
+                json.dump(self.data_raw, file)
+                
+            return self.data_raw    
+        
         try:
             # Save the data in the path
             self.data.to_excel(path,index=False)
@@ -83,9 +91,12 @@ class DataPARATEC:
             print(f"Error al guardar los datos en la ruta {path}: {e}")
         else:
             return self.data
+           
         
 if __name__ == '__main__':
     paratec = DataPARATEC()
     today = datetime.date.today()
-    filename = f'Data/PARAREC/PARATEC_{today}.xlsx'
-    data = paratec.save_paratec_data(filename)
+    filename_cleansed = f'Data/Cleansed/PARATEC/PARATEC_{today}.xlsx'
+    filename_raw = f'Data/Raw/PARATEC/PARATEC_{today}.xlsx'
+    paratec.save_paratec_data(filename_cleansed)
+    paratec.save_paratec_data(filename_raw, save_raw=True)

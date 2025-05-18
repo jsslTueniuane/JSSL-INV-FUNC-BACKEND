@@ -43,11 +43,12 @@ Donde están las clases para la extracción de la información desde las fuentes
 
         | Columna | Descripción | Tipo de dato |
         |---------|-------------|--------------|
-        |   Date  |  Fecha intermedia donde se calculo el valor del SST           |     Date         |
-        |   SST   |  Promedio movil de tres meses consecutivos de la temperatura superficial del mar en la zona de analisis del fenomeno del niño  |       float       |
-        |   ANOM  |  Indice ocenico del Niño que es el promedio de anomalías de temperatura en tres meses consecutivos   |  float            |
+        |   SEAS  |  Meses en los que se realizo el promedio movil para el ONI y el SST           |     str         |
+        |   YR  |  Año del mes intermedio del promedio del ONI y SST       |     int         |
+        |   TOTAL   |  Promedio movil de tres meses consecutivos de la temperatura superficial del mar en la zona de analisis del fenomeno del niño  |       float       |
+        |   ANOM  |  ONI   |  float            |
 
-        La columna ***SST*** esta en el formato $M_{i}M_{i+1}M_{i+2}$ donde $M_j$ es la inicial del del mes $j$ donde se realizo el promedio del registro, con $j=i,i+1,i+2$.
+        La columna ***SEAS*** esta en el formato $M_{i}M_{i+1}M_{i+2}$ donde $M_j$ es la inicial del del mes $j$ donde se realizo el promedio del registro, con $j=i,i+1,i+2$.
 
 
     - **Estandarización:** Se crea una nueva columna en el DataFrame de ***Mes*** donde se mapea el mes $M_{i+1}$ de la secuencia $M_{i}M_{i+1}M_{i+2}$ con su correspondiente numero del mes del año (puede pensarse como $i+1 \mod 12$ ). este mapeo se realiza utlizando las siguientes asignaciones.
@@ -68,7 +69,7 @@ Donde están las clases para la extracción de la información desde las fuentes
                 "NDJ": 12
             }
         ```
-        Posteriormente se crea la columna ***Date*** basada en las columnas ***Year*** y ***Mes** colocando como dia el primer dia del mes (1).
+        Posteriormente se crea la columna ***Date*** basada en las columnas ***Year*** y ***Mes*** colocando como dia el primer dia del mes (1).
 
     - **Guardado:** Se almacenen los resultados en la ruta <code>Data\ONI\ONI_historico.xlsx</code> para luego ser utilizados en el procesos de transformación.
 
@@ -129,7 +130,7 @@ Donde están las clases para la extracción de la información desde las fuentes
             |   PromedioAcumuladoEnergia  |  Aportes hidricos promedio para lo que va corrido del mes.  |       float       |
             |   MediaHistoricaEnergia   |  	Promedio mensual multianual de la serie hidrológica aprobada por Acuerdo CNO  |       float       |
 
-        - **Estandarización:** Se retiran los registros iguales a <code>'Colombia'</code> en la columna ***CodigoEmbalse*** dado a que coresponde con los agregados para Colombia de las variables para la fecha del registro, se seleccionan solamente las columnas ***Fecha***,***CodigoSerieHidrologica***,***RegionHidrologica***,***AportesHidricosEnergia***,***PromedioAcumuladoEnergia*** y ***MediaHistoricaEnergia***.  
+        - **Estandarización:** Se retiran los registros iguales a <code>'Colombia'</code> en la columna ***CodigoEmbalse*** dado a que coresponde con los agregados para Colombia de las variables para la fecha del registro, se seleccionan solamente las columnas ***Fecha***, ***CodigoSerieHidrologica***, ***RegionHidrologica***,***AportesHidricosEnergia***, ***PromedioAcumuladoEnergia*** y ***MediaHistoricaEnergia***.  
 
         - **Guardado:** Se almacenen los resultados en la ruta <code>Data\SIMEM\AportesHidricos.xlsx</code> para luego ser utilizados en el procesos de transformación. Se obtiene un DataFrame con las siguientes columnas:
 
@@ -144,7 +145,7 @@ Donde se realiza un análisis exploratorio de la información que hay en los con
     - **PARATEC**: En la columna ***reservoir*** se retiranlos espacios y las letras con tildes y se reemplanzan con las letras sin tilde.
     - **ONI**: Se crean nuevos registros para que el DataSet quede con granularidad diaria (Dado a que el DataSet original tiene granularidad diaria) y se rellenan los datos nuevos con los correspondientes valores de inicio del mes para los atributos de **SST** y **ANOM**.
     - **ListadoEmbalses:** En la columna ***NombreEmbalse*** se retiranlos espacios y las letras con tildes y se reemplanzan con las letras sin tilde.  
-    Continuación se muestra la relación entre los DataSets.
+
     - **ReservasEmbalses:** Se cambia el tipo de dato de la columna **Fecha** a <code>Datetime.Date</code>. 
     - **AportesHidricos**: Se quitan todos los nulos de las columnas **PromedioAcumuladoEnergia** y **MediaHistoricaEnergia** con el registro no nulo siguiente mas cercano.
 

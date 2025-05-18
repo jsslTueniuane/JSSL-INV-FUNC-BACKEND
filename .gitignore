@@ -2,6 +2,7 @@
 .idea/
 .vscode/
 *.swp
+__pycache__/
 *~
 
 # Archivos de compilación y ejecutables
