@@ -157,9 +157,10 @@ class JoinData:
         df_merge_agregate['Dia'] = df_merge_agregate['Fecha'].apply(lambda x: int(x.split('-')[2]))
         df_merge_agregate['Mes'] = df_merge_agregate['Fecha'].apply(lambda x: int(x.split('-')[1]))
         df_merge_agregate['Año'] = df_merge_agregate['Fecha'].apply(lambda x: int(x.split('-')[0]))
-        df_merge_agregate = pd.get_dummies(df_merge_agregate)
         if 'Fecha' in df_merge_agregate.columns:
             df_merge_agregate.drop(columns=['Fecha'], inplace=True)
+        df_merge_agregate = pd.get_dummies(df_merge_agregate)
+        
 
         return df_merge_agregate
     
@@ -192,7 +193,8 @@ class JoinData:
             """
             if stale:
                 df_normalized = self._merge_data_agregate()
-                df_normalized[['VolumenUtilDiarioEnergia', 'CapacidadUtilEnergia', 'VolumenTotalEnergia', 'VertimientosEnergia', 'SST', 'ANOM','AportesHidricosEnergia','PromedioAcumuladoEnergia','MediaHistoricaEnergia']] = self.scaler.fit_transform(df_normalized[['VolumenUtilDiarioEnergia', 'CapacidadUtilEnergia', 'VolumenTotalEnergia', 'VertimientosEnergia', 'SST', 'ANOM','AportesHidricosEnergia','PromedioAcumuladoEnergia','MediaHistoricaEnergia']])
+                
+                df_normalized[[col for col in df_normalized.columns]] = self.scaler.fit_transform(df_normalized[[col for col in df_normalized.columns]])
                 df_normalized.to_excel('../../Data/Results/Standardized/EmbalsesAgregados.xlsx', index=False)
             else:
                 self._merge_data_agregate().to_excel('../../Data/Results/NotStandardized/EmbalsesAgregados.xlsx', index=False)
